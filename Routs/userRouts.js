@@ -56,5 +56,19 @@ router.get('/all-users', async (req, res) => {
         res.status(500).json({ message: "error while fetching users: ", e })
         console.log(e);
     }
-})
+});
+router.get('/user/:mobileNo', async (req, res) => {
+    try {
+        const mobileNo=req.params.mobileNo;
+        const allUser = await user.find({mobileNo:mobileNo});
+        if(!allUser){
+            res.status(400).json({message:"No user Available"});
+        }else{
+            res.status(201).json({message:"successfully fetch users ",allUser:allUser})
+        }
+    } catch (e) {
+        res.status(500).json({ message: "error while fetching users: ", e })
+        console.log(e);
+    }
+});
 export default router;
