@@ -61,16 +61,35 @@ router.get('/user/:mobileNo', async (req, res) => {
     try {
         const mobileNo = req.params.mobileNo;
         const allUser = await user.find({ mobileNo: mobileNo });
-        if (!allUser) {
-            res.status(400).json({ message: "No user Available" });
+        if (!allUser || allUser.length===0) {
+            return res.status(400).json({ message: "No user Available" });
         } else {
-            res.status(201).json({ message: "successfully fetch users ", allUser: allUser })
+            return res.status(201).json({ message: "successfully fetch users ", allUser: allUser })
         }
     } catch (e) {
-        res.status(500).json({ message: "error while fetching users: ", e })
         console.log(e);
+        return res.status(500).json({ message: "error while fetching users: ", e })
     }
 });
+router.get('/username/:username', async (req, res) => {
+    try {
+        const username = req.params.username;
+        const allUser = await user.find({ username: username });
+
+        if (!allUser || allUser.length === 0) {
+            return res.status(404).json({ message: "No user available" });
+        }
+
+        return res.status(200).json({
+            message: "Successfully fetched user(s)",
+            user: allUser,
+        });
+    } catch (e) {
+        console.error("Error while fetching users:", e);
+        return res.status(500).json({ message: "Error while fetching users", error: e.message });
+    }
+});
+
 router.post('/save/:id/:contactId', async (req, res) => {
     try {
         const userId = req.params.id;
@@ -80,8 +99,8 @@ router.post('/save/:id/:contactId', async (req, res) => {
         const contactExist = await user.findById(contactId);
 
         if (!userExist || !contactExist) {
-            console.log("user",userExist);
-            console.log("contact",contactExist)
+            console.log("user", userExist);
+            console.log("contact", contactExist)
             return res.status(404).json({ message: "User or contact not found" });
         }
 
