@@ -94,4 +94,28 @@ router.post('/save/:id', async (req, res) => {
         res.status(500).json({ message: "Error while saving user contact", error: e.message });
     }
 });
+router.get('/email/:email', async (req, res) => {
+    try {
+        const { email } = req.params;
+        const selectedUser = await user.findOne({ email });
+
+        if (selectedUser) {
+            return res.status(200).json({
+                message: "Fetched user successfully",
+                user: selectedUser
+            });
+        }
+        return res.status(404).json({
+            message: "User not found"
+        });
+
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({
+            message: "Error while fetching user by email",
+            error: e.message
+        });
+    }
+});
+
 export default router;
