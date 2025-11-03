@@ -97,7 +97,7 @@ router.post('/save/:id', async (req, res) => {
 router.get('/email/:email', async (req, res) => {
     try {
         const { email } = req.params;
-        const selectedUser = await user.findOne({ email });
+        const selectedUser = await user.findOne({ email }).populate("contacts");
 
         if (selectedUser) {
             return res.status(200).json({
