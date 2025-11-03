@@ -5,6 +5,6 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     address: { type: String, required: true },
     mobileNo: { type: String, required: true },
-    contact:{type:mongoose.Schema.Types.ObjectId,ref:"user"},
+    contact: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
 }, { timestamps: true });
 export default mongoose.model("user", userSchema);
