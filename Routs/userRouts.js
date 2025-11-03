@@ -71,29 +71,34 @@ router.get('/user/:mobileNo', async (req, res) => {
         console.log(e);
     }
 });
-router.post('/save/:id', async (req, res) => {
+router.post('/save/:id/:contactId', async (req, res) => {
     try {
-        const id = req.params.id;
-        const { contactId } = req.body; 
-        const userExist = await user.findById(id);
-        if (!userExist) {
-            return res.status(404).json({ message: "User not found" });
+        const userId = req.params.id;
+        const contactId = req.params.contactId;
+
+        const userExist = await user.findById(userId);
+        const contactExist = await user.findById(contactId);
+
+        if (!userExist || !contactExist) {
+            console.log("user",userExist);
+            console.log("contact",contactExist)
+            return res.status(404).json({ message: "User or contact not found" });
         }
-        const contactUser = await user.findById(contactId);
-        if (!contactUser) {
-            return res.status(404).json({ message: "Contact user not found" });
-        }
+
         if (userExist.contacts.includes(contactId)) {
             return res.status(400).json({ message: "Contact already added" });
         }
+
         userExist.contacts.push(contactId);
         await userExist.save();
-        res.status(200).json({ message: "Contact added successfully", user: userExist });
+
+        res.status(200).json({ message: "Contact saved successfully", user: userExist });
     } catch (e) {
-        console.error("Error while saving user contact:", e);
+        console.error(e);
         res.status(500).json({ message: "Error while saving user contact", error: e.message });
     }
 });
+
 router.get('/email/:email', async (req, res) => {
     try {
         const { email } = req.params;
