@@ -57,14 +57,14 @@ router.get('/all-users', async (req, res) => {
         console.log(e);
     }
 });
-router.get('/user/:mobileNo', async (req, res) => {
+router.get('/mobile/:mobileNo', async (req, res) => {
     try {
         const mobileNo = req.params.mobileNo;
         const allUser = await user.find({ mobileNo: mobileNo });
         if (!allUser || allUser.length===0) {
             return res.status(400).json({ message: "No user Available" });
         } else {
-            return res.status(201).json({ message: "successfully fetch users ", allUser: allUser })
+            return res.status(201).json({ message: "successfully fetch users ", user: allUser })
         }
     } catch (e) {
         console.log(e);
