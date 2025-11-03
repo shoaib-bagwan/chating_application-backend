@@ -47,10 +47,10 @@ router.post('/login', async (req, res) => {
 router.get('/all-users', async (req, res) => {
     try {
         const allUser = await user.find({});
-        if(!allUser){
-            res.status(400).json({message:"No user Available"});
-        }else{
-            res.status(201).json({message:"successfully fetch users ",allUser:allUser})
+        if (!allUser) {
+            res.status(400).json({ message: "No user Available" });
+        } else {
+            res.status(201).json({ message: "successfully fetch users ", allUser: allUser })
         }
     } catch (e) {
         res.status(500).json({ message: "error while fetching users: ", e })
@@ -59,16 +59,39 @@ router.get('/all-users', async (req, res) => {
 });
 router.get('/user/:mobileNo', async (req, res) => {
     try {
-        const mobileNo=req.params.mobileNo;
-        const allUser = await user.find({mobileNo:mobileNo});
-        if(!allUser){
-            res.status(400).json({message:"No user Available"});
-        }else{
-            res.status(201).json({message:"successfully fetch users ",allUser:allUser})
+        const mobileNo = req.params.mobileNo;
+        const allUser = await user.find({ mobileNo: mobileNo });
+        if (!allUser) {
+            res.status(400).json({ message: "No user Available" });
+        } else {
+            res.status(201).json({ message: "successfully fetch users ", allUser: allUser })
         }
     } catch (e) {
         res.status(500).json({ message: "error while fetching users: ", e })
         console.log(e);
+    }
+});
+router.post('/save/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { contactId } = req.body; 
+        const userExist = await user.findById(id);
+        if (!userExist) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const contactUser = await user.findById(contactId);
+        if (!contactUser) {
+            return res.status(404).json({ message: "Contact user not found" });
+        }
+        if (userExist.contacts.includes(contactId)) {
+            return res.status(400).json({ message: "Contact already added" });
+        }
+        userExist.contacts.push(contactId);
+        await userExist.save();
+        res.status(200).json({ message: "Contact added successfully", user: userExist });
+    } catch (e) {
+        console.error("Error while saving user contact:", e);
+        res.status(500).json({ message: "Error while saving user contact", error: e.message });
     }
 });
 export default router;
